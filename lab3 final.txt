@@ -1,0 +1,154 @@
+//Alex Field
+//CompSci 575
+//Lab 3D
+
+// A program to determine the cost of parking in a parking lot based on the amount of hours parked, type of vehicle, and age of person parking.
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+int main()
+
+{
+
+	char ch;
+
+	int hours;
+	int minutes;
+	int maxHours = 16;
+	int minRounded = 30;
+	int carFreeTime = 2;
+	int carFirstTierMaxTime = 5;
+	int truckFreeTime = 2;
+	int truckFirstTierMaxTime = 4;
+	
+
+	double cost;
+	double carFirstTierPrice = 1.00;
+	double carSecondTierPrice = 0.50;
+	double truckFirstTierPrice = 2.00;
+	double truckSecondTierPrice = 1.00;						//needed decimal point precision
+
+	cout << fixed << showpoint << setprecision(2);
+
+	cout << "Input type of charge, C for Car, T for Trucks, or S for Senior Citizen" << endl;
+	cin >> ch;
+
+	if (ch == 'S' || ch == 's' || ch == 'C' || ch == 'c' || ch == 'T' || ch =='t')  // I am testing the data for a valid input of charge type
+	{
+
+		cout << "Enter time parked in hours and minutes" << endl;
+		cin >> hours >> minutes;
+
+
+		if (minutes > minRounded)				// round minutes up above 30 to a full hour to meet charging criteria
+		{
+			hours += 1;
+		}
+
+		if (hours <= maxHours && hours > 0)	// testing data for valid parking hours since they are not aloud to park over 16 hours
+		{
+			
+				if (ch == 'S' || ch == 's')
+				{
+					cost = 0;			//parking for seniors is free
+				}
+				
+				else if (ch == 'C' || ch == 'c')		// if else flow for Cars parking prices
+				{
+					if (hours <= carFreeTime)
+					{
+						cost = hours * 0;
+					}
+
+					else if (hours > carFreeTime && hours <= carFirstTierMaxTime)
+					{
+						cost = (hours - carFreeTime) * carFirstTierPrice;
+					}
+
+					else if (hours > carFirstTierMaxTime && hours <= maxHours)
+					{
+						cost = ((hours - carFirstTierMaxTime) * carSecondTierPrice) + ((carFirstTierMaxTime - carFreeTime) * carFirstTierPrice);
+					}
+
+				}
+
+				else if (ch == 'T' || ch == 't')		// if else flow for Trucks parking prices
+{
+					if (hours <= truckFreeTime)
+					{
+						cost = hours * 0;
+					}
+
+					else if (hours > truckFreeTime && hours <= truckFirstTierMaxTime)
+					{
+						cost = (hours - truckFreeTime) * truckFirstTierPrice;
+					}
+
+					else if (hours > truckFirstTierMaxTime && hours <= maxHours)
+					{
+						cost = ((hours - truckFirstTierMaxTime) * truckSecondTierPrice) + ((truckFirstTierMaxTime - truckFreeTime) * truckFirstTierPrice);
+					}
+
+				}
+
+				cout << "Cost= $" << cost << endl;
+			
+		}
+		else cout << "error, hours must be greater than 0 and less than 16." << endl;
+	}
+	else cout << "error please enter C, T or S" << endl;
+
+	return 0;
+}
+
+/*
+
+Input type of charge, C for Car, T for Trucks, or S for Senior Citizen
+x
+error please enter capital C, T or S
+Press any key to continue . . .
+
+
+Input type of charge, C for Car, T for Trucks, or S for Senior Citizen
+C
+Enter time parked in hours and minutes
+17
+0
+error, hours must be greater than 0 and less than 16.
+Press any key to continue . . .
+
+
+Input type of charge, C for Car, T for Trucks, or S for Senior Citizen
+T
+Enter time parked in hours and minutes
+11
+31
+Cost= $12.00
+Press any key to continue . . .
+
+
+
+Input type of charge, C for Car, T for Trucks, or S for Senior Citizen
+S
+Enter time parked in hours and minutes
+2
+0
+Cost= $0.00
+Press any key to continue . . .
+
+
+Input type of charge, C for Car, T for Trucks, or S for Senior Citizen
+C
+Enter time parked in hours and minutes
+4
+40
+Cost= $3.00
+Press any key to continue . . .
+
+
+
+
+*/

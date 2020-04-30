@@ -1,0 +1,141 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+const int ARRAY_SIZE = 1000;
+
+void GetData(int [], int [], int &, int &);
+int CalcArray(int [], int);
+void NumAboveAverage(int [], int, int);
+
+int main()
+
+{
+	ifstream infile;
+	ofstream outfile;
+
+	int evenAverage;
+	int oddAverage;
+	int evenArray[ARRAY_SIZE];
+	int oddArray[ARRAY_SIZE];
+	int i = 0;
+	int j = 0;
+
+	GetData(oddArray, evenArray, i, j);
+
+
+		if (!(i || j) == 0)
+		{
+			if (i != 0)
+			{
+
+				oddAverage = CalcArray(oddArray, i);
+
+				NumAboveAverage(oddArray, i, oddAverage);
+			}
+
+			else
+				cout << "There are no odd numbers in file" << endl;
+
+			if (j != 0)
+			{
+
+				evenAverage = CalcArray(evenArray, j);
+
+				NumAboveAverage(evenArray, j, evenAverage);
+			}
+
+			else
+				cout << "There are no even numbers in file" << endl;
+		}
+
+		else
+			cout << "File Empty" << endl;
+
+	return 0;
+
+}
+
+void GetData(int oddArray[], int evenArray[], int &i, int &j)
+{
+	ifstream infile;
+
+	infile.open("c:\\temp\\lab7datafile.txt");
+	if (!infile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	while (!infile.eof() && (j < ARRAY_SIZE - 1) && (i < ARRAY_SIZE - 1))
+
+	{
+		int num;
+
+		infile >> num;
+
+		if (num % 2)
+		{
+			oddArray[i] = num;
+			i++;
+		}
+
+		else
+		{
+			evenArray[j] = num;
+			j++;
+		}
+
+		infile.peek();
+	}
+
+}
+
+
+int CalcArray(int array[], int arraySize)
+{
+	int average;
+	int index;
+	int sum = 0;
+	int maxIndex = array[0];
+	int minIndex = array[0];
+
+	for (index = 0; index < arraySize; index++)
+		cout << array[index] << " ";
+
+	for (index = 0; index < arraySize; index++)
+		sum = sum + array[index];
+
+	for (index = 1; index < arraySize; index++)
+		if (maxIndex < array[index])
+			maxIndex = array[index];
+
+	for (index = 1; index < arraySize; index++)
+		if (minIndex > array[index])
+			minIndex = array[index];
+
+	average = sum / arraySize;
+
+	cout << "\nSum = " << sum << "\nAverage = " << average << "\nHighest = " << maxIndex << "\nLowest = " << minIndex << endl;
+
+	return average;
+}
+
+void NumAboveAverage(int array[], int arraySize, int average)
+
+{
+	int index = 0;
+
+	cout << "Numbers above average = ";
+
+	for (index = 0; index < arraySize; index++)
+		if (array[index] > average)
+			cout << array[index] << " ";
+
+	cout << "\n\n";
+
+}
+

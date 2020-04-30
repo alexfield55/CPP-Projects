@@ -1,0 +1,99 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+
+int main()
+
+{
+
+	ifstream infile;
+	ofstream outfile;
+
+	int num;
+	int numHigh;
+	int numLow;
+	int numTot;
+	int i;
+
+	int numWhole = 0;
+	int k = 0;
+
+	const double numPerLine = 7.00;
+
+	cout << fixed << showpoint << setprecision(2);
+
+	infile.open("c:\\temp\\datafile.txt");
+	if (!infile) 							//there was an error on open, file not found
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	outfile.open("c:\\temp\\newdatafile.txt");
+	if (!outfile) 							//there was an error on open, file not found
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+
+	while (!infile.eof())
+	{
+
+		i = 0;
+		numTot = 0;
+
+		while (i < numPerLine)
+
+		{
+			infile >> num;
+
+			numTot += num;
+
+			if (i == 0)
+			{
+				numHigh = num;
+				numLow = num;
+			}
+
+			if (num > numHigh)
+				numHigh = num;
+			if (num < numLow)
+				numLow = num;
+
+			cout << num << " ";
+
+			outfile << num << " ";
+
+			i++;
+		}
+
+		cout << "\nTotal " << numTot << "\tAverage " << numTot / numPerLine << "\tLowest " << numLow << "\tHighest " << numHigh << "\n\n" << endl;
+
+		outfile << "\nTotal " << numTot << "\tAverage " << numTot / numPerLine << "\tLowest " << numLow << "\tHighest " << numHigh << "\n\n" << endl;
+
+		numWhole += numTot;
+
+		k++;
+
+
+	}
+
+
+	cout << "All numbers Total " << numWhole << "\tAll numbers Average " << numWhole / (k*numPerLine) << "\tTotal Number Count " << k * numPerLine << endl;
+
+	outfile << "All numbers Total " << numWhole << "\tAll numbers Average " << numWhole / (k*numPerLine) << "\tTotal Number Count " << k * numPerLine << endl;
+
+
+
+
+	infile.close();
+	outfile.close();
+
+	return 0;
+}
+

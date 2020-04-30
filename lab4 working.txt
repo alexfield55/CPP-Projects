@@ -1,0 +1,105 @@
+/* Assignment
+Plan and code a program utilizing one or more repetition structures to solve the following problem :
+After caffeine is absorbed into the body, 13 % is eliminated from the body each hour.Assume a person drinks
+an 8 - oz cup of brewed coffee containing 130 mg of caffeine, and that the caffeine is absorbed immediately
+into the body.
+
+Write a program to calculate the following values :
+(a)The number of hours required until 65 mg(one - half the original amount) remain in the body.
+(b)The amount of caffeine in the body X hours after the person drinks the coffee.
+
+Input
+Person’s name and how many hours they want to see the output for.
+
+Output
+For(a) above, just the number of hours required until 65 mg remain in the body.
+For(b) above, a listing of caffeine remaining after each hour until the user’s limit is reached.
+*/
+
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+int main()
+
+{
+	string name;
+
+	char ch;
+
+	int hours;
+	int i;
+	int caffeineHL;
+
+	double titrationRate = 0.13;
+	double mgCaffeine;
+
+	cout << fixed << showpoint << setprecision(2);
+
+	cout << "What is your name?" << endl;
+	cin >> name;
+	cout << endl;
+
+	do
+	{
+
+		cout << name << ", would you like to know how long it will be until half the amount of caffiene is in your system? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+
+		if (ch == 'Y' || ch == 'y')
+		{
+			hours = 0;
+			mgCaffeine = 130;
+			caffeineHL = mgCaffeine / 2;
+
+			while (mgCaffeine >= caffeineHL)
+			{
+				mgCaffeine = mgCaffeine - mgCaffeine * titrationRate;
+				hours++;
+			}
+
+			cout << name << ", the caffeine in your system will be at half in " << hours << " hours.\n" << endl;
+		}
+
+		cout << name << ", would you like to know how much caffeine is in your system after a given a mount of hours? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+
+		if (ch == 'Y' || ch == 'y')
+		{
+			cout << "Starting with 130mg of caffiene, how many hours later would you like to calculate the caffeine left in your system?" << endl;
+			cin >> hours;
+			cout << endl;
+
+			i = 1;
+			mgCaffeine = 130;
+
+			while (i <= hours)
+			{
+				mgCaffeine = mgCaffeine - mgCaffeine * titrationRate;
+				cout << "Caffeine remaining after " << i << " hour(s)\t" << mgCaffeine << " mg" << endl; // 73 hours it gets to 0 given two decimal places
+				i++;
+			}
+		}
+
+		else cout << name << ", please start program over." << endl;
+
+		cout << "\nWould you like to run the program again? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+	}
+
+	while (ch == 'Y' || ch == 'y');
+
+
+	return 0;
+
+
+}

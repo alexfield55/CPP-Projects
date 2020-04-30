@@ -1,0 +1,348 @@
+//alex field
+//lab 8
+//section 3152
+
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+const int ARRAY_SIZE = 1000;
+const int WIDTH = 10;
+
+struct surveyType
+{
+	string idCode;
+	double annualIncome;
+	int householdMembers;
+};
+
+int displayMenu();
+void getData(surveyType survey[], int &surveySize);
+void printList(surveyType survey[], int surveySize);
+void calcAverage(surveyType survey[], int surveySize);
+void belowPoverty(surveyType survey[], int surveySize);
+void selectionSort(surveyType survey[], int surveySize);
+void calcMedian(surveyType survey[], int surveySize);
+
+
+int main()
+
+{
+	cout << fixed << showpoint << setprecision(2);
+
+	surveyType survey[ARRAY_SIZE];
+	int surveySize;
+	char selection;
+
+	getData(survey, surveySize);
+
+	do
+	{
+		switch (displayMenu())
+		{
+		case 1:
+			printList(survey, surveySize);
+			break;
+		case 2:
+			calcAverage(survey, surveySize);
+			break;
+		case 3: 
+			belowPoverty(survey, surveySize);
+			break;
+		case 4:
+			selectionSort(survey, surveySize);
+			break;
+		case 5: 
+			calcMedian(survey, surveySize);
+			break;
+		}
+
+		cout << "\nWould you like to run again Y/N?" << endl;
+		cin >> selection;
+		cout << endl;
+
+	} while (selection == 'Y' || selection == 'y');
+
+	return 0;
+}
+
+int displayMenu()
+{
+	int choice;
+	cout << "Below are choices for printing the data." << endl;
+	cout << "Selection 1: Print all data" << endl;
+	cout << "Selection 2: Show houses with income greater than the average" << endl;
+	cout << "Selection 3: Show houses below poverty line" << endl;
+	cout << "Selection 4: Print all data sorted by income" << endl;
+	cout << "Selection 5: Show median income" << endl;
+	cout << "Please select choice 1, 2, 3, 4, or 5" << endl;
+	cin >> choice;
+	cout << endl;
+	return choice;
+}
+
+void getData(surveyType survey[], int &surveySize)
+{
+	ifstream infile;
+	ofstream errorfile;
+
+	infile.open("c:\\temp\\lab8in.txt");
+	if (!infile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	errorfile.open("c:\\temp\\errorlab8data.txt");
+	if (!errorfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	surveyType surveyTest;
+
+	surveySize = 0;
+
+	while (!infile.eof())
+	{
+	
+		infile >> surveyTest.idCode >> surveyTest.annualIncome >> surveyTest.householdMembers;
+
+		if (surveyTest.annualIncome < 0 || surveyTest.householdMembers < 1 || surveyTest.idCode.length() != 4)
+		{
+			errorfile << "Record contains errors" << setw(WIDTH) << surveyTest.idCode << setw(WIDTH) << surveyTest.annualIncome << setw(WIDTH) << surveyTest.householdMembers << endl;
+		}
+
+		else
+		{
+			survey[surveySize] = surveyTest;
+
+			surveySize++;
+		}
+
+		infile.peek();
+	}
+
+
+	infile.close();
+	errorfile.close();
+
+	cout << "Data successfully extracted, records in error sent to seperate file for review." << endl;
+}
+
+void printList(surveyType survey[], int surveySize)
+{
+	ofstream outfile;
+
+	outfile << fixed << showpoint << setprecision(2);
+
+	outfile.open("c:\\temp\\selection1lab8data.txt");
+	if (!outfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	cout << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+	outfile << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+
+	for (int index = 0; index < surveySize; index++)
+	{
+		cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+		outfile << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+	}
+
+	outfile.close();
+}
+
+void calcAverage(surveyType survey[], int surveySize)
+{
+	ofstream selection1file;
+
+	selection1file << fixed << showpoint << setprecision(2);
+
+	selection1file.open("c:\\temp\\selection2lab8data.txt");
+	if (!selection1file)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	cout << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+	selection1file << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+
+	double total = 0;
+	double average = 0;
+
+	for (int index = 0; index < surveySize; index++)
+	{
+		total = total + survey[index].annualIncome;
+	}
+
+	average = total / surveySize;
+
+	for (int index = 0; index < surveySize; index++)
+	{
+		if (survey[index].annualIncome > average)
+			cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+			selection1file << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+	}
+
+	cout << left << setw(WIDTH) << "Average" << right << setw(WIDTH) << average << endl;
+
+	selection1file.close();
+}
+
+void belowPoverty(surveyType survey[], int surveySize)
+{
+	
+	ofstream outfile;
+
+	outfile << fixed << showpoint << setprecision(2);
+
+	outfile.open("c:\\temp\\selection3lab8data.txt");
+	if (!outfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	cout << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+	outfile << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+
+	for (int index = 0; index < surveySize; index++)
+	{
+		if (survey[index].annualIncome < (8000+(500 * (survey[index].householdMembers-2))))
+			cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+			outfile << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+	}
+
+	outfile.close();
+}
+
+void selectionSort(surveyType survey[], int surveySize)
+{
+	int smallestIndex;
+	int location;
+	int tempHouseholdMembers;
+	double tempIncome;
+	string tempch;
+	ofstream outfile;
+
+	outfile << fixed << showpoint << setprecision(2);
+
+	outfile.open("c:\\temp\\selection4lab8data.txt");
+	if (!outfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	cout << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+	outfile << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+
+	for (int index = 0; index < surveySize - 1; index++)
+	{
+		
+		smallestIndex = index;
+
+		for (location = index + 1; location < surveySize; location++)
+			if (survey[location].annualIncome < survey[smallestIndex].annualIncome)
+				smallestIndex = location;
+	
+		tempIncome = survey[smallestIndex].annualIncome;
+		tempch = survey[smallestIndex].idCode;
+		tempHouseholdMembers = survey[smallestIndex].householdMembers;
+
+		survey[smallestIndex].annualIncome = survey[index].annualIncome;
+		survey[smallestIndex].idCode = survey[index].idCode;
+		survey[smallestIndex].householdMembers = survey[index].householdMembers;
+
+		survey[index].annualIncome = tempIncome;
+		survey[index].idCode = tempch;
+		survey[index].householdMembers = tempHouseholdMembers;
+	}
+
+	for (int index = 0; index < surveySize; index++)
+	{
+		cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+		outfile << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+	}
+
+	outfile.close();
+}
+
+void calcMedian(surveyType survey[], int surveySize) 
+{
+	int smallestIndex;
+	int location;
+	int tempHouseholdMembers;
+	int median;
+	double tempIncome;
+	string tempch;
+	ofstream outfile;
+
+	outfile << fixed << showpoint << setprecision(2);
+
+	outfile.open("c:\\temp\\selection5lab8data.txt");
+	if (!outfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	cout << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+	outfile << left << setw(WIDTH) << "ID Code" << right << setw(WIDTH) << "Income" << setw(WIDTH) << "Members" << endl;
+
+	for (int index = 0; index < surveySize - 1; index++)
+	{
+		
+		smallestIndex = index;
+		for (location = index + 1; location < surveySize; location++)
+			if (survey[location].annualIncome < survey[smallestIndex].annualIncome)
+				smallestIndex = location;
+		
+		tempIncome = survey[smallestIndex].annualIncome;
+		tempch = survey[smallestIndex].idCode;
+		tempHouseholdMembers = survey[smallestIndex].householdMembers;
+
+		survey[smallestIndex].annualIncome = survey[index].annualIncome;
+		survey[smallestIndex].idCode = survey[index].idCode;
+		survey[smallestIndex].householdMembers = survey[index].householdMembers;
+
+		survey[index].annualIncome = tempIncome;
+		survey[index].idCode = tempch;
+		survey[index].householdMembers = tempHouseholdMembers;
+	}
+
+	if ((surveySize - 1) % 2)
+	{
+		median = (surveySize - 1) / 2;
+
+		for (int index = 0; index < surveySize; index++)
+		{
+			if (survey[index].annualIncome > survey[median].annualIncome)
+				cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+				outfile << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+		}
+	}
+
+	else
+	{
+		median = (surveySize - 1) / 2;
+
+		for (int index = 0; index < surveySize; index++)
+		{
+			if (survey[index].annualIncome > ((survey[median].annualIncome + survey[median +1].annualIncome)/2))
+				cout << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+				outfile << left << setw(WIDTH) << survey[index].idCode << right << setw(WIDTH) << survey[index].annualIncome << setw(WIDTH) << survey[index].householdMembers << endl;
+		}
+	}
+	
+	outfile.close();
+}

@@ -1,0 +1,184 @@
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void GetData(string&, string&, double&, double&, int&, char&, int&, int&, int&, int&);
+void CalcPay(double&, double&, double&, double&, int&, char&, double&, double&, double&);
+void SendData(string, string, double, double, double, double, double, double, double);
+
+const int WIDTH = 10;
+
+ifstream infile;
+ofstream outfile, errorfile;
+
+int main()
+{
+
+	string FirstName, LastName;
+
+	double FICATax = 0;
+	double FITW = 0;
+	double HourlyWage;
+	double HoursWorked;
+	double GrossPay = 0;
+	double NetPay = 0;
+	double AdjustedWeeklyIncome;
+
+
+	int HourlyError, WageError, ExemptionsError, MaritalError;
+
+	char MaritalStat;
+
+	int NumExemptions;
+
+
+	cout << fixed << showpoint << setprecision(2);
+	outfile << fixed << showpoint << setprecision(2);
+
+	infile.open("c:\\temp\\lab6in.txt");
+	if (!infile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	outfile.open("c:\\temp\\writelab6data.txt");
+	if (!outfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+	errorfile.open("c:\\temp\\errorlab6data.txt");
+	if (!errorfile)
+	{
+		cout << "Cannot open file, terminating program" << endl;
+		exit(1);
+	}
+
+
+
+	cout << left << setw(WIDTH) << "First" << setw(WIDTH) << "Last" << setw(WIDTH) << "Hours" << setw(WIDTH) << "Hourly" << setw(WIDTH) << "Gross" << setw(WIDTH) << "Net" << setw(WIDTH) << "Adj Inc" << setw(WIDTH) << "FICA" << setw(WIDTH) << "FITW" << endl;
+	outfile << left << setw(WIDTH) << "First" << setw(WIDTH) << "Last" << setw(WIDTH) << "Hours" << setw(WIDTH) << "Hourly" << setw(WIDTH) << "Gross" << setw(WIDTH) << "Net" << setw(WIDTH) << "Adj Inc" << setw(WIDTH) << "FICA" << setw(WIDTH) << "FITW" << endl;
+
+	while (!infile.eof())
+	{
+
+		GetData(FirstName, LastName, HoursWorked, HourlyWage, NumExemptions, MaritalStat, WageError, HourlyError, ExemptionsError, MaritalError);
+		if (!HourlyError && !WageError && !ExemptionsError && !MaritalError)
+		{
+			CalcPay(GrossPay, NetPay, HourlyWage, HoursWorked, NumExemptions, MaritalStat, FICATax, FITW, AdjustedWeeklyIncome);
+			SendData(FirstName, LastName, HoursWorked, HourlyWage, GrossPay, NetPay, FICATax, FITW, AdjustedWeeklyIncome);
+		}
+		infile.peek();
+	}
+
+	infile.close();
+	outfile.close();
+
+	return 0;
+}
+
+void GetData(string& FirstName, string& LastName, double& HoursWorked, double& HourlyWage, int& NumExemptions, char& MaritalStat, int& WageError, int& HourlyError, int& ExemptionsError, int& MaritalError)
+{
+	infile >> FirstName >> LastName >> HoursWorked >> HourlyWage >> NumExemptions >> MaritalStat;
+
+	WageError = HourlyWage <= 0;
+
+	HourlyError = HoursWorked < 0 || HoursWorked > 168;
+
+	ExemptionsError = NumExemptions < 0;
+
+	if (MaritalStat == 'M')
+		MaritalError = 0;
+	else if (MaritalStat == 'S')
+		MaritalError = 0;
+	else
+		MaritalError = 1;
+
+
+	if (WageError)
+		errorfile << left << setw(40) << "error in hourly wage for" << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << HourlyWage << endl;
+	if (HourlyError)   
+		errorfile << left << setw(40) << "error in hours worked for" << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << HoursWorked << endl;
+	if (ExemptionsError)
+		errorfile << left << setw(40) << "error in number of exemptions for" << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << NumExemptions << endl;
+	if (MaritalError)
+		errorfile << left << setw(40) << "error in Marital Status for" << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << MaritalStat << endl;
+}
+
+void SendData(string FirstName, string LastName, double HoursWorked, double HourlyWage, double GrossPay, double NetPay, double FICAtax, double FITW, double AdjustedWeeklyIncome)
+{
+	outfile << left << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << HoursWorked << setw(WIDTH) << HourlyWage << setw(WIDTH) << GrossPay << setw(WIDTH) << NetPay << setw(WIDTH) << AdjustedWeeklyIncome << setw(WIDTH) << FICAtax << setw(WIDTH) << FITW << endl;
+	cout << left << setw(WIDTH) << FirstName << setw(WIDTH) << LastName << setw(WIDTH) << HoursWorked << setw(WIDTH) << HourlyWage << setw(WIDTH) << GrossPay << setw(WIDTH) << NetPay << setw(WIDTH) << AdjustedWeeklyIncome << setw(WIDTH) << FICAtax << setw(WIDTH) << FITW << endl;
+}
+
+void CalcPay(double & GrossPay, double & NetPay, double & HourlyWage, double & HoursWorked, int & NumExemptions, char & MaritalStat, double & FICATax, double & FITW, double & AdjustedWeeklyIncome) // function for calculations
+
+{
+	double FICA = .0565;
+	double Deduction = 73.08;
+	double SingleTierOne = 0.00;
+	double SingleTierTwo = 721.00;
+	double SingleTierThree = 7510.00;
+	double SingleTierTwoTax = 0.28;
+	double SingleTierThreeTax = 0.35;
+	double MarriedTierOne = 0.00;
+	double MarriedTierTwo = 1515.00;
+	double MarriedTierThree = 7624.00;
+	double MarriedTierTwoTax = 0.15;
+	double MarriedTierThreeTax = 0.30;
+	double SingleTierTwoBaseTax = 93.60;
+	double SingleTierThreeBaseTax = 2167.16;
+	double MarriedTierTwoBaseTax = 187.15;
+	double MarriedTierThreeBaseTax = 2020.42;
+	int baseWorkHours = 40;
+	double overtimeMultiplier = 1.5;
+
+	if (HoursWorked < baseWorkHours)
+		GrossPay = HourlyWage * HoursWorked;
+	else
+		GrossPay = HourlyWage * baseWorkHours + ((HourlyWage * overtimeMultiplier) * (HoursWorked - baseWorkHours));
+
+	FICATax = GrossPay * FICA;
+
+	if (HoursWorked != 0)
+	{
+		if (MaritalStat == 'S')
+		{
+			AdjustedWeeklyIncome = GrossPay - (NumExemptions * Deduction);
+
+			if (AdjustedWeeklyIncome > SingleTierOne && AdjustedWeeklyIncome <= SingleTierTwo)
+				FITW = SingleTierOne;
+			else if (AdjustedWeeklyIncome > SingleTierTwo && AdjustedWeeklyIncome <= SingleTierThree)
+				FITW = SingleTierTwoBaseTax + ((AdjustedWeeklyIncome - SingleTierTwo) * SingleTierTwoTax);
+			else if (AdjustedWeeklyIncome > SingleTierThree)
+				FITW = SingleTierThreeBaseTax + ((AdjustedWeeklyIncome - SingleTierThree) * SingleTierThreeTax);
+
+		}
+
+		if (MaritalStat == 'M')
+		{
+			AdjustedWeeklyIncome = GrossPay - (NumExemptions * Deduction);
+
+			if (AdjustedWeeklyIncome > MarriedTierOne && AdjustedWeeklyIncome <= MarriedTierTwo)
+				FITW = MarriedTierOne;
+			else if (AdjustedWeeklyIncome > MarriedTierTwo && AdjustedWeeklyIncome <= MarriedTierThree)
+				FITW = MarriedTierTwoBaseTax + ((AdjustedWeeklyIncome - MarriedTierTwo) * MarriedTierTwoTax);
+			else if (AdjustedWeeklyIncome > MarriedTierThree)
+				FITW = MarriedTierThreeBaseTax + ((AdjustedWeeklyIncome - MarriedTierThree) * MarriedTierThreeTax);
+
+		}
+
+	}
+
+	else
+		AdjustedWeeklyIncome = 0;
+
+	NetPay = GrossPay - FICATax - FITW;
+
+
+}

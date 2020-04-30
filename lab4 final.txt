@@ -1,0 +1,228 @@
+/* Assignment
+Plan and code a program utilizing one or more repetition structures to solve the following problem :
+After caffeine is absorbed into the body, 13 % is eliminated from the body each hour.Assume a person drinks
+an 8 - oz cup of brewed coffee containing 130 mg of caffeine, and that the caffeine is absorbed immediately
+into the body.
+
+Write a program to calculate the following values :
+(a)The number of hours required until 65 mg(one - half the original amount) remain in the body.
+(b)The amount of caffeine in the body X hours after the person drinks the coffee.
+
+Input
+Person’s name and how many hours they want to see the output for.
+
+Output
+For(a) above, just the number of hours required until 65 mg remain in the body.
+For(b) above, a listing of caffeine remaining after each hour until the user’s limit is reached.
+*/
+
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+int main()
+
+{
+	string name;
+
+	char ch;
+
+	int hours;
+	int i;
+	int caffeineHL;
+
+	double totalCaffeine; // need decimal point precision
+
+	const double caffeineMin = 0.005;  // setting up constants
+	const double titrationRate = 0.13;
+	const double mgCaffeine = 130;
+
+
+	cout << fixed << showpoint << setprecision(2); // two decimals points is enought precision that seems relevant
+
+	cout << "What is your name?" << endl;
+	cin >> name;
+	cout << endl;
+
+	do
+	{
+
+		cout << name << ", would you like to know how long it will be until half the amount of caffiene is in your system? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+
+		if (ch == 'Y' || ch == 'y')
+		{
+			hours = 0;
+			caffeineHL = mgCaffeine / 2; // calculates half life of current caffiene constant
+			totalCaffeine = mgCaffeine;
+
+			while (totalCaffeine >= caffeineHL) // gets out of loop when hits half life
+			{
+				totalCaffeine = totalCaffeine - totalCaffeine * titrationRate;
+				hours++;
+			}
+
+			cout << name << ", the caffeine in your system will be at half in " << hours << " hours.\n" << endl;
+		}
+
+		cout << name << ", would you like to know how much caffeine is in your system after a given a mount of hours? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+
+		if (ch == 'Y' || ch == 'y')
+		{
+			cout << "Starting with " << mgCaffeine << "mg of caffiene, how many hours later would you like to calculate the caffeine left in your system?" << endl; // setting up questions for current caffeine constant 
+			cin >> hours;
+			cout << endl;
+
+			i = 1;
+			totalCaffeine = mgCaffeine;
+
+			while (i <= hours && totalCaffeine > caffeineMin) // takes the constants and exits loop at either hours entered or when the caffeine content drops below the established minimum constant.
+			{
+				totalCaffeine = totalCaffeine - totalCaffeine * titrationRate;
+				cout << "Caffeine remaining after " << i << " hour(s)\t" << totalCaffeine << " mg" << endl; // 73 hours it gets to 0 given two decimal places
+				i++;
+			}
+			if (i < hours)
+				cout << "Caffeine content in system past this time below relevant levels" << endl; // when the caffiene content is below 0.00
+		
+		}
+
+
+		else cout << name << ", please start program over." << endl;
+
+		cout << "\nWould you like to run the program again? Y/N" << endl;
+		cin >> ch;
+		cout << endl;
+
+	}
+
+	while (ch == 'Y' || ch == 'y');
+
+
+	return 0;
+
+
+}
+
+/*
+What is your name ?
+Alex
+
+Alex, would you like to know how long it will be until half the amount of caffie
+ne is in your system ? Y / N
+y
+
+Alex, the caffeine in your system will be at half in 5 hours.
+
+Alex, would you like to know how much caffeine is in your system after a given a
+mount of hours ? Y / N
+y
+
+Starting with 130mg of caffiene, how many hours later would you like to calculat
+e the caffeine left in your system ?
+100
+
+Caffeine remaining after 1 hour(s)      113.10 mg
+Caffeine remaining after 2 hour(s)      98.40 mg
+Caffeine remaining after 3 hour(s)      85.61 mg
+Caffeine remaining after 4 hour(s)      74.48 mg
+Caffeine remaining after 5 hour(s)      64.79 mg
+Caffeine remaining after 6 hour(s)      56.37 mg
+Caffeine remaining after 7 hour(s)      49.04 mg
+Caffeine remaining after 8 hour(s)      42.67 mg
+Caffeine remaining after 9 hour(s)      37.12 mg
+Caffeine remaining after 10 hour(s)     32.30 mg
+Caffeine remaining after 11 hour(s)     28.10 mg
+Caffeine remaining after 12 hour(s)     24.44 mg
+Caffeine remaining after 13 hour(s)     21.27 mg
+Caffeine remaining after 14 hour(s)     18.50 mg
+Caffeine remaining after 15 hour(s)     16.10 mg
+Caffeine remaining after 16 hour(s)     14.00 mg
+Caffeine remaining after 17 hour(s)     12.18 mg
+Caffeine remaining after 18 hour(s)     10.60 mg
+Caffeine remaining after 19 hour(s)     9.22 mg
+Caffeine remaining after 20 hour(s)     8.02 mg
+Caffeine remaining after 21 hour(s)     6.98 mg
+Caffeine remaining after 22 hour(s)     6.07 mg
+Caffeine remaining after 23 hour(s)     5.28 mg
+Caffeine remaining after 24 hour(s)     4.60 mg
+Caffeine remaining after 25 hour(s)     4.00 mg
+Caffeine remaining after 26 hour(s)     3.48 mg
+Caffeine remaining after 27 hour(s)     3.03 mg
+Caffeine remaining after 28 hour(s)     2.63 mg
+Caffeine remaining after 29 hour(s)     2.29 mg
+Caffeine remaining after 30 hour(s)     1.99 mg
+Caffeine remaining after 31 hour(s)     1.73 mg
+Caffeine remaining after 32 hour(s)     1.51 mg
+Caffeine remaining after 33 hour(s)     1.31 mg
+Caffeine remaining after 34 hour(s)     1.14 mg
+Caffeine remaining after 35 hour(s)     0.99 mg
+Caffeine remaining after 36 hour(s)     0.86 mg
+Caffeine remaining after 37 hour(s)     0.75 mg
+Caffeine remaining after 38 hour(s)     0.65 mg
+Caffeine remaining after 39 hour(s)     0.57 mg
+Caffeine remaining after 40 hour(s)     0.50 mg
+Caffeine remaining after 41 hour(s)     0.43 mg
+Caffeine remaining after 42 hour(s)     0.37 mg
+Caffeine remaining after 43 hour(s)     0.33 mg
+Caffeine remaining after 44 hour(s)     0.28 mg
+Caffeine remaining after 45 hour(s)     0.25 mg
+Caffeine remaining after 46 hour(s)     0.21 mg
+Caffeine remaining after 47 hour(s)     0.19 mg
+Caffeine remaining after 48 hour(s)     0.16 mg
+Caffeine remaining after 49 hour(s)     0.14 mg
+Caffeine remaining after 50 hour(s)     0.12 mg
+Caffeine remaining after 51 hour(s)     0.11 mg
+Caffeine remaining after 52 hour(s)     0.09 mg
+Caffeine remaining after 53 hour(s)     0.08 mg
+Caffeine remaining after 54 hour(s)     0.07 mg
+Caffeine remaining after 55 hour(s)     0.06 mg
+Caffeine remaining after 56 hour(s)     0.05 mg
+Caffeine remaining after 57 hour(s)     0.05 mg
+Caffeine remaining after 58 hour(s)     0.04 mg
+Caffeine remaining after 59 hour(s)     0.04 mg
+Caffeine remaining after 60 hour(s)     0.03 mg
+Caffeine remaining after 61 hour(s)     0.03 mg
+Caffeine remaining after 62 hour(s)     0.02 mg
+Caffeine remaining after 63 hour(s)     0.02 mg
+Caffeine remaining after 64 hour(s)     0.02 mg
+Caffeine remaining after 65 hour(s)     0.02 mg
+Caffeine remaining after 66 hour(s)     0.01 mg
+Caffeine remaining after 67 hour(s)     0.01 mg
+Caffeine remaining after 68 hour(s)     0.01 mg
+Caffeine remaining after 69 hour(s)     0.01 mg
+Caffeine remaining after 70 hour(s)     0.01 mg
+Caffeine remaining after 71 hour(s)     0.01 mg
+Caffeine remaining after 72 hour(s)     0.01 mg
+Caffeine remaining after 73 hour(s)     0.00 mg
+Caffeine content in system past this time below relevant levels
+
+Would you like to run the program again ? Y / N
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
